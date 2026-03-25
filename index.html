@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0e0e0e" />
+  <title>El Chico de Tirso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- SPLASH -->
+  <div id="splash">
+    <div class="splash-inner">
+      <div class="splash-logo">
+        <span>El Chico</span>
+        <em>de Tirso</em>
+      </div>
+      <div class="splash-line"></div>
+      <p class="splash-sub">Dashboard · Peluquería Premium</p>
+    </div>
+  </div>
+
+  <div id="app" class="app-hidden">
+    <header class="topbar">
+      <div class="topbar-brand">
+        <h1>El Chico <em>de Tirso</em></h1>
+      </div>
+      <div class="topbar-actions">
+        <button id="installBtn" class="btn-ghost hidden">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13M5 13l7 7 7-7"/><path d="M3 21h18"/></svg>
+          Instalar
+        </button>
+        <button id="refreshBtn" class="btn-ghost">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Actualizar
+        </button>
+        <div class="dot-live"></div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <nav class="sidebar">
+        <button class="nav-btn active" data-view="dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </button>
+        <button class="nav-btn" data-view="appointments">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Citas
+        </button>
+        <button class="nav-btn" data-view="clients">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 8v6M22 11h-6"/></svg>
+          Clientes
+        </button>
+        <button class="nav-btn" data-view="services">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a7 7 0 0 1 7 7c0 4-7 13-7 13S5 13 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2"/></svg>
+          Servicios
+        </button>
+        <button class="nav-btn" data-view="settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Ajustes
+        </button>
+      </nav>
+
+      <main class="content">
+
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="view active">
+          <div class="view-header">
+            <div>
+              <h2>Buenos días</h2>
+              <p class="view-date" id="todayLabel"></p>
+            </div>
+          </div>
+
+          <div class="kpis">
+            <article class="kpi">
+              <span class="kpi-label">Citas hoy</span>
+              <strong id="kpiToday" class="kpi-value">0</strong>
+            </article>
+            <article class="kpi">
+              <span class="kpi-label">Pendientes</span>
+              <strong id="kpiPending" class="kpi-value">0</strong>
+            </article>
+            <article class="kpi kpi-accent">
+              <span class="kpi-label">Próxima cita</span>
+              <strong id="kpiNext" class="kpi-value kpi-time">—</strong>
+            </article>
+            <article class="kpi">
+              <span class="kpi-label">No show</span>
+              <strong id="kpiNoShow" class="kpi-value">0</strong>
+            </article>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Agenda de hoy</h3>
+              <button class="btn-primary" data-open-modal="newAppointmentModal">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                Nueva cita
+              </button>
+            </div>
+            <div id="todayList" class="list"></div>
+          </div>
+        </section>
+
+        <!-- CITAS -->
+        <section id="appointments" class="view">
+          <div class="view-header">
+            <h2>Citas</h2>
+            <div class="header-row">
+              <input id="dateFilter" type="date" class="input-date" />
+              <button class="btn-primary" data-open-modal="newAppointmentModal">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                Nueva
+              </button>
+            </div>
+          </div>
+          <div class="panel">
+            <div id="appointmentsList" class="list"></div>
+          </div>
+        </section>
+
+        <!-- CLIENTES -->
+        <section id="clients" class="view">
+          <div class="view-header">
+            <h2>Clientes</h2>
+            <button class="btn-primary" data-open-modal="newClientModal">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+              Nuevo cliente
+            </button>
+          </div>
+          <div class="panel">
+            <div id="clientsList" class="list"></div>
+          </div>
+        </section>
+
+        <!-- SERVICIOS -->
+        <section id="services" class="view">
+          <div class="view-header">
+            <h2>Servicios</h2>
+          </div>
+          <div class="services-grid" id="servicesList"></div>
+        </section>
+
+        <!-- AJUSTES -->
+        <section id="settings" class="view">
+          <div class="view-header">
+            <h2>Ajustes</h2>
+          </div>
+          <div class="panel settings-panel">
+            <h3 class="settings-section">Horario del salón</h3>
+            <form id="settingsForm" class="form">
+              <div class="form-row">
+                <label>Apertura
+                  <input type="time" id="openTime" value="10:00" />
+                </label>
+                <label>Cierre
+                  <input type="time" id="closeTime" value="19:00" />
+                </label>
+              </div>
+              <h3 class="settings-section">Recordatorios automáticos</h3>
+              <div class="form-row">
+                <label>Recordatorio 24h
+                  <select id="reminder24">
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
+                  </select>
+                </label>
+                <label>Recordatorio 2h
+                  <select id="reminder2">
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
+                  </select>
+                </label>
+              </div>
+              <h3 class="settings-section">Conexión Supabase</h3>
+              <label>Supabase URL
+                <input type="text" id="supabaseUrl" placeholder="https://xxxx.supabase.co" />
+              </label>
+              <label>Supabase anon key
+                <textarea id="supabaseKey" rows="3" placeholder="Pega aquí tu anon key…"></textarea>
+              </label>
+              <button class="btn-primary" type="submit">Guardar ajustes</button>
+            </form>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL NUEVA CITA -->
+  <dialog id="newAppointmentModal">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <h3>Nueva cita</h3>
+        <button class="modal-close" onclick="document.getElementById('newAppointmentModal').close()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form class="form" id="appointmentForm">
+        <div class="form-row">
+          <label>Nombre
+            <input id="apptClientName" required placeholder="Ana García" />
+          </label>
+          <label>Teléfono
+            <input id="apptClientPhone" required placeholder="+34 600 000 000" />
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Servicio
+            <select id="apptService"></select>
+          </label>
+          <label>Longitud
+            <select id="apptHairLength">
+              <option value="short">Corto</option>
+              <option value="medium">Medio</option>
+              <option value="long">Largo</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Fecha
+            <input id="apptDate" type="date" required />
+          </label>
+          <label>Hora
+            <input id="apptTime" type="time" required />
+          </label>
+        </div>
+        <label>Notas
+          <textarea id="apptNotes" rows="2" placeholder="Observaciones…"></textarea>
+        </label>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" onclick="document.getElementById('newAppointmentModal').close()">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar cita</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- MODAL NUEVO CLIENTE -->
+  <dialog id="newClientModal">
+    <div class="modal-inner">
+      <div class="modal-head">
+        <h3>Nuevo cliente</h3>
+        <button class="modal-close" onclick="document.getElementById('newClientModal').close()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form class="form" id="clientForm">
+        <label>Nombre completo
+          <input id="clientName" required placeholder="Ana García" />
+        </label>
+        <label>Teléfono
+          <input id="clientPhone" required placeholder="+34 600 000 000" />
+        </label>
+        <label>Notas
+          <textarea id="clientNotes" rows="2" placeholder="Preferencias, alergias…"></textarea>
+        </label>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" onclick="document.getElementById('newClientModal').close()">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar cliente</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <template id="itemTemplate">
+    <article class="item">
+      <div class="item-main">
+        <strong class="item-title"></strong>
+        <p class="item-sub"></p>
+      </div>
+      <div class="item-actions"></div>
+    </article>
+  </template>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>

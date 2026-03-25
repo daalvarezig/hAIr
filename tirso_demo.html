@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>El Chico de Tirso · Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;background:#0e0e0e;font-family:'DM Sans',system-ui,sans-serif}
+.page{display:flex;flex-direction:column;align-items:center;padding:40px 20px 60px}
+.hero{text-align:center;margin-bottom:48px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,6vw,52px);font-weight:500;color:#f0ece4;line-height:1.1}
+.hero h1 em{color:#c9a96e;font-style:italic;font-weight:400}
+.hero p{color:#6b6560;font-size:14px;margin-top:10px;letter-spacing:.06em;text-transform:uppercase}
+.hero-line{width:36px;height:1px;background:#c9a96e;margin:16px auto}
+.demo-wrap{display:flex;gap:36px;align-items:flex-start;justify-content:center;flex-wrap:wrap;width:100%;max-width:780px}
+.label-pill{display:inline-flex;align-items:center;gap:6px;background:#1c1c1c;border:1px solid #2a2a2a;border-radius:20px;padding:4px 12px;font-size:11px;color:#9a948c;margin-bottom:10px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#5a8a6a;box-shadow:0 0 6px #5a8a6a;animation:blink 2.5s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.phone-col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.phone-shell{width:248px;background:#1a1a1a;border-radius:38px;border:6px solid #2a2a2a;overflow:hidden;box-shadow:0 0 0 1px #333,0 24px 60px rgba(0,0,0,.6)}
+.status-bar{background:#075E54;display:flex;align-items:center;justify-content:space-between;padding:6px 14px}
+.status-bar span{color:#fff;font-size:10px}
+.wa-header{background:#075E54;display:flex;align-items:center;gap:9px;padding:8px 12px 12px}
+.avatar{width:36px;height:36px;border-radius:50%;background:#128C7E;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:600;flex-shrink:0}
+.wa-name{color:#fff;font-size:13px;font-weight:500}
+.wa-sub{color:rgba(255,255,255,.65);font-size:10px;margin-top:1px}
+.chat-area{background:#0b1f2e;min-height:390px;padding:10px 9px;display:flex;flex-direction:column;gap:7px;overflow:hidden}
+.bubble{max-width:82%;padding:8px 11px;border-radius:10px;font-size:11px;line-height:1.5;opacity:0;transform:translateY(8px);transition:opacity .35s ease,transform .35s ease}
+.bubble.show{opacity:1;transform:none}
+.bot{background:#1f2d3a;color:#e8e0d4;border-radius:10px 10px 10px 2px;align-self:flex-start}
+.user{background:#1a3d2b;color:#d4edda;border-radius:10px 10px 2px 10px;align-self:flex-end}
+.bubble .ts{display:block;font-size:9px;color:rgba(255,255,255,.35);margin-top:4px;text-align:right}
+.typing{display:flex;align-items:center;gap:3px;padding:8px 11px;background:#1f2d3a;border-radius:10px 10px 10px 2px;width:46px;opacity:0;transition:opacity .3s;flex-shrink:0}
+.typing.show{opacity:1}
+.typing span{width:5px;height:5px;border-radius:50%;background:#888;animation:td 1s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,60%,100%{transform:none;opacity:.4}30%{transform:translateY(-3px);opacity:1}}
+.wa-bar{background:#1a1a1a;border-top:1px solid #2a2a2a;padding:7px 10px;display:flex;align-items:center;gap:7px}
+.wa-input-fake{flex:1;background:#2a2a2a;border-radius:20px;padding:6px 12px;font-size:10px;color:#555}
+.send-btn{width:28px;height:28px;border-radius:50%;background:#128C7E;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.send-btn svg{width:13px;height:13px;fill:#fff}
+.ctrl-row{display:flex;gap:8px}
+.ctrl-btn{background:#1c1c1c;border:1px solid #2a2a2a;border-radius:8px;padding:7px 16px;color:#9a948c;font-size:11px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.ctrl-btn:hover{background:#242424;color:#f0ece4}
+.ctrl-btn.active{background:#c9a96e;color:#0e0e0e;border-color:#c9a96e;font-weight:500}
+.right-col{display:flex;flex-direction:column;gap:10px;flex:1;min-width:280px;max-width:420px}
+.dash-card{background:#1c1c1c;border:1px solid #2a2a2a;border-radius:18px;overflow:hidden}
+.dash-head{background:#141414;border-bottom:1px solid #2a2a2a;padding:13px 17px;display:flex;align-items:center;justify-content:space-between}
+.dash-title{font-family:'Playfair Display',serif;font-size:15px;color:#f0ece4;font-style:italic}
+.dash-date{font-size:10px;color:#6b6560}
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#2a2a2a}
+.kpi{background:#1c1c1c;padding:13px;text-align:center}
+.kpi-lbl{font-size:9px;color:#6b6560;letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+.kpi-val{font-family:'Playfair Display',serif;font-size:24px;color:#f0ece4}
+.kpi-val.gold{color:#c9a96e}
+.appt-list{padding:10px 12px}
+.appt-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #222;opacity:0;transition:opacity .4s}
+.appt-item.show{opacity:1}
+.appt-item:last-child{border-bottom:none}
+.t-col{font-size:11px;color:#c9a96e;font-weight:500;min-width:38px}
+.a-name{font-size:12px;color:#f0ece4;font-weight:500}
+.a-svc{font-size:10px;color:#6b6560;margin-top:1px}
+.badge{display:inline-flex;padding:2px 7px;border-radius:20px;font-size:9px;margin-left:auto;white-space:nowrap}
+.b-new{background:rgba(74,122,170,.2);color:#7baad4;border:1px solid rgba(74,122,170,.25)}
+.b-ok{background:rgba(90,138,106,.2);color:#7aba94;border:1px solid rgba(90,138,106,.25)}
+.new-badge{background:#c9a96e;color:#0e0e0e;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600;animation:pop .4s ease;display:inline-block;margin-left:4px}
+@keyframes pop{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+.flow-card{background:#1c1c1c;border:1px solid #2a2a2a;border-radius:18px;padding:16px}
+.flow-title{font-size:11px;color:#6b6560;letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px}
+.flow-steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;align-items:flex-start;gap:10px;padding:8px 0}
+.step-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.step-line{width:1px;height:16px;background:#2a2a2a;margin-left:3px}
+.step-text{font-size:12px;color:#9a948c}
+.step-text strong{color:#f0ece4;font-weight:500}
+.footer{margin-top:56px;text-align:center}
+.footer p{font-family:'Playfair Display',serif;font-size:13px;color:#3a3530;font-style:italic}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <h1>El Chico <em>de Tirso</em></h1>
+    <div class="hero-line"></div>
+    <p>Sistema inteligente de reservas · Demo interactiva</p>
+  </div>
+
+  <div class="demo-wrap">
+
+    <div class="phone-col">
+      <div class="label-pill"><div class="live-dot"></div>WhatsApp · Hair AI</div>
+      <div class="phone-shell">
+        <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+        <div class="wa-header">
+          <div class="avatar">HA</div>
+          <div><div class="wa-name">Hair AI · Tirso</div><div class="wa-sub">en línea</div></div>
+        </div>
+        <div class="chat-area" id="chatArea"></div>
+        <div class="wa-bar">
+          <div class="wa-input-fake">Escribe un mensaje...</div>
+          <div class="send-btn"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></div>
+        </div>
+      </div>
+      <div class="ctrl-row">
+        <button class="ctrl-btn active" id="btn0" onclick="startScene(0)">Reserva</button>
+        <button class="ctrl-btn" id="btn1" onclick="startScene(1)">Recordatorio</button>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <div class="label-pill"><div class="live-dot"></div>Dashboard · El Chico de Tirso</div>
+
+      <div class="dash-card">
+        <div class="dash-head">
+          <span class="dash-title">El Chico de Tirso</span>
+          <span class="dash-date" id="dashDate"></span>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-lbl">Citas hoy</div><div class="kpi-val" id="kToday">3</div></div>
+          <div class="kpi"><div class="kpi-lbl">Próxima</div><div class="kpi-val gold" id="kNext">12:00</div></div>
+          <div class="kpi"><div class="kpi-lbl">Pendientes</div><div class="kpi-val" id="kPend">2</div></div>
+        </div>
+        <div class="appt-list" id="apptList"></div>
+      </div>
+
+      <div class="flow-card">
+        <div class="flow-title">Cómo funciona</div>
+        <div class="flow-steps">
+          <div class="step"><div class="step-dot" style="background:#c9a96e"></div><div><div class="step-text"><strong>WhatsApp</strong> — la clienta escribe</div></div></div>
+          <div class="step-line"></div>
+          <div class="step"><div class="step-dot" style="background:#7baad4"></div><div><div class="step-text"><strong>Hair AI</strong> — entiende y pregunta</div></div></div>
+          <div class="step-line"></div>
+          <div class="step"><div class="step-dot" style="background:#7aba94"></div><div><div class="step-text"><strong>Supabase</strong> — guarda la cita</div></div></div>
+          <div class="step-line"></div>
+          <div class="step"><div class="step-dot" style="background:#9a948c"></div><div><div class="step-text"><strong>Dashboard</strong> — aparece aquí al instante</div></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer"><p>El Chico de Tirso · Sistema de reservas automatizado</p></div>
+</div>
+
+<script>
+const SCENES=[
+  {msgs:[
+    {from:'bot',text:'¡Hola! Soy el asistente de El Chico de Tirso.\n¿En qué puedo ayudarte?',delay:500},
+    {from:'user',text:'Hola, quería pedir cita para mechas',delay:1900},
+    {from:'bot',text:'Claro que sí. ¿Tu pelo es corto, medio o largo?',delay:3300},
+    {from:'user',text:'Largo',delay:4700},
+    {from:'bot',text:'Perfecto. Las mechas en pelo largo son 90 min.\n\nTengo disponible:\n📅 Lunes 28 · 10:30h\n📅 Martes 29 · 16:00h\n\n¿Cuál te va mejor?',delay:6100},
+    {from:'user',text:'El lunes a las 10:30',delay:8400},
+    {from:'bot',text:'¡Reserva confirmada!\n\n✅ Mechas · Pelo largo\n📅 Lunes 28, 10:30h\n📍 El Chico de Tirso\n\nTe enviaré recordatorio el día anterior.',delay:10000,newAppt:true},
+  ]},
+  {msgs:[
+    {from:'bot',text:'¡Hola Laura! Te recuerdo que mañana tienes cita:',delay:500},
+    {from:'bot',text:'📅 Martes 29 · 10:30h\n💇 Mechas · Pelo largo\n📍 El Chico de Tirso',delay:2100},
+    {from:'bot',text:'¿Confirmas tu asistencia?',delay:3600},
+    {from:'user',text:'Sí, allí estaré 👍',delay:5000},
+    {from:'bot',text:'¡Genial, te esperamos! Si necesitas cambiar la hora, escríbenos aquí.',delay:6500,confirm:true},
+  ]}
+];
+const BASE=[
+  {time:'10:30',name:'Laura Sánchez',svc:'Mechas · Largo',st:'b-ok',lbl:'Confirmada'},
+  {time:'12:00',name:'Carmen Ortega',svc:'Barros · Medio',st:'b-ok',lbl:'Confirmada'},
+  {time:'15:00',name:'Marta Jiménez',svc:'Cortar y peinar · Largo',st:'b-new',lbl:'Pendiente'},
+];
+let timers=[],extraAppt=false;
+function clearT(){timers.forEach(clearTimeout);timers=[];}
+function startScene(idx){
+  clearT();
+  [0,1].forEach(i=>document.getElementById('btn'+i).classList.toggle('active',i===idx));
+  document.getElementById('chatArea').innerHTML='';
+  if(idx===0&&extraAppt){extraAppt=false;renderAppts();document.getElementById('kToday').textContent='3';document.getElementById('kPend').textContent='2';}
+  SCENES[idx].msgs.forEach(m=>{const t=setTimeout(()=>addMsg(m),m.delay);timers.push(t);});
+}
+function addMsg(m){
+  const chat=document.getElementById('chatArea');
+  const typ=document.createElement('div');
+  typ.className='typing show';
+  typ.innerHTML='<span></span><span></span><span></span>';
+  chat.appendChild(typ);
+  chat.scrollTop=chat.scrollHeight;
+  const t=setTimeout(()=>{
+    typ.remove();
+    const b=document.createElement('div');
+    b.className='bubble '+m.from;
+    const now=new Date();
+    const ts=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    b.innerHTML=m.text.replace(/\n/g,'<br>')+`<span class="ts">${ts}</span>`;
+    chat.appendChild(b);
+    setTimeout(()=>b.classList.add('show'),20);
+    chat.scrollTop=chat.scrollHeight;
+    if(m.newAppt)addNewAppt();
+    if(m.confirm)confirmAppt();
+  },750);
+  timers.push(t);
+}
+function addNewAppt(){
+  if(extraAppt)return;extraAppt=true;
+  const list=document.getElementById('apptList');
+  const el=document.createElement('div');el.className='appt-item';
+  el.innerHTML=`<div class="t-col">10:30</div><div><div class="a-name">Laura Sánchez<span class="new-badge">NUEVA</span></div><div class="a-svc">Mechas · Largo</div></div><span class="badge b-new">Pendiente</span>`;
+  list.prepend(el);setTimeout(()=>el.classList.add('show'),50);
+  document.getElementById('kToday').textContent='4';
+  document.getElementById('kPend').textContent='3';
+}
+function confirmAppt(){
+  const first=document.querySelector('.appt-item');
+  if(first){const b=first.querySelector('.badge');if(b){b.className='badge b-ok';b.textContent='Confirmada';}}
+  const p=document.getElementById('kPend');p.textContent=String(Math.max(0,parseInt(p.textContent)-1));
+}
+function renderAppts(){
+  const list=document.getElementById('apptList');list.innerHTML='';
+  BASE.forEach((a,i)=>{
+    const el=document.createElement('div');el.className='appt-item';
+    el.innerHTML=`<div class="t-col">${a.time}</div><div><div class="a-name">${a.name}</div><div class="a-svc">${a.svc}</div></div><span class="badge ${a.st}">${a.lbl}</span>`;
+    list.appendChild(el);setTimeout(()=>el.classList.add('show'),i*120+200);
+  });
+}
+const d=new Date();
+const days=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+document.getElementById('dashDate').textContent=`${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;
+renderAppts();
+startScene(0);
+</script>
+</body>
+</html>

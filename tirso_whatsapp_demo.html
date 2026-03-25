@@ -1,0 +1,225 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{display:flex;gap:32px;align-items:flex-start;justify-content:center;padding:32px 16px;font-family:'DM Sans',system-ui,sans-serif;background:#0e0e0e;min-height:600px}
+.phone-shell{width:240px;flex-shrink:0;background:#1a1a1a;border-radius:36px;border:6px solid #2a2a2a;overflow:hidden;box-shadow:0 0 0 1px #333}
+.status-bar{background:#075E54;display:flex;align-items:center;justify-content:space-between;padding:6px 12px}
+.status-bar span{color:#fff;font-size:10px}
+.wa-header{background:#075E54;display:flex;align-items:center;gap:8px;padding:8px 12px 10px}
+.avatar{width:34px;height:34px;border-radius:50%;background:#128C7E;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;font-weight:600;flex-shrink:0}
+.wa-name{color:#fff;font-size:13px;font-weight:500}
+.wa-status{color:rgba(255,255,255,.7);font-size:10px;margin-top:1px}
+.chat-area{background:#0a1929;min-height:380px;padding:10px 8px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.bubble{max-width:80%;padding:7px 10px;border-radius:10px;font-size:11px;line-height:1.45;opacity:0;transform:translateY(8px);transition:opacity .35s ease,transform .35s ease}
+.bubble.show{opacity:1;transform:none}
+.bot{background:#1f2d3a;color:#e8e0d4;border-radius:10px 10px 10px 2px;align-self:flex-start}
+.user{background:#1a3d2b;color:#d4edda;border-radius:10px 10px 2px 10px;align-self:flex-end}
+.bubble .ts{display:block;font-size:9px;color:rgba(255,255,255,.4);margin-top:3px;text-align:right}
+.typing{display:flex;align-items:center;gap:3px;padding:8px 10px;background:#1f2d3a;border-radius:10px 10px 10px 2px;width:44px;opacity:0;transition:opacity .3s}
+.typing.show{opacity:1}
+.typing span{width:5px;height:5px;border-radius:50%;background:#888;animation:td 1s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,60%,100%{transform:none;opacity:.4}30%{transform:translateY(-3px);opacity:1}}
+.wa-input{background:#1a1a1a;border-top:1px solid #2a2a2a;padding:7px 10px;display:flex;align-items:center;gap:6px}
+.wa-input-box{flex:1;background:#2a2a2a;border-radius:20px;padding:6px 11px;font-size:10px;color:#888}
+.send-btn{width:28px;height:28px;border-radius:50%;background:#128C7E;display:flex;align-items:center;justify-content:center}
+.send-btn svg{width:14px;height:14px;fill:#fff}
+.notification{position:relative;margin-top:8px;background:#1e3a2a;border:1px solid #2a5a3a;border-radius:10px;padding:8px 10px;font-size:10px;color:#7aba94;opacity:0;transition:opacity .4s}
+.notification.show{opacity:1}
+.right-panel{flex:1;max-width:420px;display:flex;flex-direction:column;gap:14px}
+.label-pill{display:inline-flex;align-items:center;gap:6px;background:#1c1c1c;border:1px solid #2a2a2a;border-radius:20px;padding:4px 12px;font-size:11px;color:#9a948c;margin-bottom:4px}
+.label-pill .dot{width:6px;height:6px;border-radius:50%;background:#5a8a6a;box-shadow:0 0 6px #5a8a6a;animation:blink 2.5s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.dash-card{background:#1c1c1c;border:1px solid #2a2a2a;border-radius:16px;overflow:hidden;opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease}
+.dash-card.show{opacity:1;transform:none}
+.dash-head{background:#141414;border-bottom:1px solid #2a2a2a;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.dash-title{font-family:Georgia,serif;font-size:14px;color:#f0ece4;font-style:italic}
+.dash-sub{font-size:10px;color:#6b6560}
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#2a2a2a}
+.kpi{background:#1c1c1c;padding:12px;text-align:center}
+.kpi-lbl{font-size:9px;color:#6b6560;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+.kpi-val{font-family:Georgia,serif;font-size:22px;color:#f0ece4}
+.kpi-val.gold{color:#c9a96e}
+.appt-list{padding:10px}
+.appt-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #232323;opacity:0;transition:opacity .4s}
+.appt-item.show{opacity:1}
+.appt-item:last-child{border-bottom:none}
+.time-col{font-size:11px;color:#c9a96e;font-weight:500;min-width:38px}
+.appt-info .name{font-size:12px;color:#f0ece4;font-weight:500}
+.appt-info .svc{font-size:10px;color:#6b6560;margin-top:1px}
+.badge{display:inline-flex;padding:2px 7px;border-radius:20px;font-size:9px;margin-left:auto}
+.b-new{background:rgba(74,122,170,.2);color:#7baad4;border:1px solid rgba(74,122,170,.25)}
+.b-ok{background:rgba(90,138,106,.2);color:#7aba94;border:1px solid rgba(90,138,106,.25)}
+.new-badge{background:#c9a96e;color:#0e0e0e;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600;animation:pop .4s ease}
+@keyframes pop{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+.ctrl-row{display:flex;gap:8px;justify-content:center;margin-top:4px}
+.ctrl-btn{background:#1c1c1c;border:1px solid #2a2a2a;border-radius:8px;padding:7px 14px;color:#9a948c;font-size:11px;cursor:pointer;transition:all .15s}
+.ctrl-btn:hover{background:#242424;color:#f0ece4}
+.ctrl-btn.active{background:#c9a96e;color:#0e0e0e;border-color:#c9a96e;font-weight:500}
+</style>
+
+<div class="wrap">
+
+  <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+    <div class="label-pill"><div class="dot"></div>WhatsApp · Hair AI</div>
+    <div class="phone-shell">
+      <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+      <div class="wa-header">
+        <div class="avatar">HA</div>
+        <div><div class="wa-name">Hair AI · Tirso</div><div class="wa-status" id="wa-status">en línea</div></div>
+      </div>
+      <div class="chat-area" id="chatArea"></div>
+      <div class="wa-input">
+        <div class="wa-input-box" id="inputBox">Escribe un mensaje...</div>
+        <div class="send-btn"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></div>
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <button class="ctrl-btn active" id="btn1" onclick="startScene(0)">Reserva</button>
+      <button class="ctrl-btn" id="btn2" onclick="startScene(1)">Recordatorio</button>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="label-pill"><div class="dot"></div>Dashboard · El Chico de Tirso</div>
+    <div class="dash-card show">
+      <div class="dash-head">
+        <span class="dash-title">El Chico de Tirso</span>
+        <span class="dash-sub" id="dashDate"></span>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-lbl">Hoy</div><div class="kpi-val" id="kToday">3</div></div>
+        <div class="kpi"><div class="kpi-lbl">Próxima</div><div class="kpi-val gold" id="kNext">12:00</div></div>
+        <div class="kpi"><div class="kpi-lbl">Pendientes</div><div class="kpi-val" id="kPend">2</div></div>
+      </div>
+      <div class="appt-list" id="apptList"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SCENES = [
+  {
+    title: "Reserva",
+    msgs: [
+      {from:'bot', text:'¡Hola! Soy el asistente de El Chico de Tirso. ¿En qué puedo ayudarte?', delay:600},
+      {from:'user', text:'Hola, quería pedir cita para mechas', delay:1800},
+      {from:'bot', text:'Claro que sí. ¿Tu pelo es corto, medio o largo?', delay:3200},
+      {from:'user', text:'Largo', delay:4600},
+      {from:'bot', text:'Perfecto. Las mechas en pelo largo son 90 min. Tengo disponible:\n\n📅 Lunes 28 a las 10:30\n📅 Martes 29 a las 16:00\n\n¿Cuál te va mejor?', delay:6000},
+      {from:'user', text:'El lunes a las 10:30', delay:8200},
+      {from:'bot', text:'¡Listo! Tu cita queda confirmada:\n\n✅ Mechas · Pelo largo\n📅 Lunes 28, 10:30h\n💇 El Chico de Tirso\n\nTe enviaré un recordatorio el día anterior.', delay:9800, newAppt:true},
+    ]
+  },
+  {
+    title: "Recordatorio",
+    msgs: [
+      {from:'bot', text:'¡Hola Laura! 👋 Te recuerdo que mañana tienes cita:', delay:600},
+      {from:'bot', text:'📅 Martes 29 a las 10:30h\n💇 Mechas · Pelo largo\n📍 El Chico de Tirso', delay:2000},
+      {from:'bot', text:'¿Confirmas tu asistencia?', delay:3400},
+      {from:'user', text:'Sí, allí estaré', delay:4800},
+      {from:'bot', text:'¡Genial! Te esperamos mañana. Si necesitas cancelar o cambiar la hora, escríbenos aquí.', delay:6200, confirm:true},
+    ]
+  }
+];
+
+const APPTS_BASE = [
+  {time:'10:30', name:'Laura Sánchez', svc:'Mechas · Largo', status:'b-ok', lbl:'Confirmada'},
+  {time:'12:00', name:'Carmen Ortega', svc:'Barros · Medio', status:'b-ok', lbl:'Confirmada'},
+  {time:'15:00', name:'Marta Jiménez', svc:'Cortar y peinar · Largo', status:'b-new', lbl:'Pendiente'},
+];
+
+let currentTimer = [];
+let extraAppt = false;
+
+function clearTimers(){currentTimer.forEach(clearTimeout);currentTimer=[];}
+
+function startScene(idx){
+  clearTimers();
+  document.getElementById('btn1').classList.toggle('active', idx===0);
+  document.getElementById('btn2').classList.toggle('active', idx===1);
+  const chat = document.getElementById('chatArea');
+  chat.innerHTML = '';
+  if(idx===0 && extraAppt){
+    extraAppt=false;
+    renderAppts();
+    document.getElementById('kToday').textContent='3';
+    document.getElementById('kPend').textContent='2';
+  }
+  const scene = SCENES[idx];
+  scene.msgs.forEach(m => {
+    const t = setTimeout(()=>addMsg(m), m.delay);
+    currentTimer.push(t);
+  });
+}
+
+function addMsg(m){
+  const chat = document.getElementById('chatArea');
+  const typing = document.createElement('div');
+  typing.className='typing show';
+  typing.innerHTML='<span></span><span></span><span></span>';
+  chat.appendChild(typing);
+  chat.scrollTop=chat.scrollHeight;
+
+  const t2 = setTimeout(()=>{
+    typing.remove();
+    const b = document.createElement('div');
+    b.className=`bubble ${m.from}`;
+    const txt = m.text.replace(/\n/g,'<br>');
+    const now = new Date();
+    const ts = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    b.innerHTML=`${txt}<span class="ts">${ts}</span>`;
+    chat.appendChild(b);
+    setTimeout(()=>b.classList.add('show'),20);
+    chat.scrollTop=chat.scrollHeight;
+
+    if(m.newAppt) addNewAppt();
+    if(m.confirm) confirmAppt();
+  }, 700);
+  currentTimer.push(t2);
+}
+
+function addNewAppt(){
+  if(extraAppt) return;
+  extraAppt=true;
+  const list = document.getElementById('apptList');
+  const item = document.createElement('div');
+  item.className='appt-item';
+  item.innerHTML=`<div class="time-col">10:30</div><div class="appt-info"><div class="name">Laura Sánchez <span class="new-badge">NUEVA</span></div><div class="svc">Mechas · Largo</div></div><span class="badge b-new">Pendiente</span>`;
+  list.prepend(item);
+  setTimeout(()=>item.classList.add('show'),50);
+  document.getElementById('kToday').textContent='4';
+  document.getElementById('kPend').textContent='3';
+}
+
+function confirmAppt(){
+  const items = document.querySelectorAll('.appt-item');
+  if(items.length>0){
+    const badge = items[0].querySelector('.badge');
+    if(badge){badge.className='badge b-ok';badge.textContent='Confirmada';}
+    document.getElementById('kPend').textContent=String(Math.max(0,parseInt(document.getElementById('kPend').textContent||'2')-1));
+  }
+}
+
+function renderAppts(){
+  const list = document.getElementById('apptList');
+  list.innerHTML='';
+  APPTS_BASE.forEach((a,i)=>{
+    const item = document.createElement('div');
+    item.className='appt-item';
+    item.innerHTML=`<div class="time-col">${a.time}</div><div class="appt-info"><div class="name">${a.name}</div><div class="svc">${a.svc}</div></div><span class="badge ${a.status}">${a.lbl}</span>`;
+    list.appendChild(item);
+    setTimeout(()=>item.classList.add('show'), i*120+200);
+  });
+}
+
+const d=new Date();
+const days=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+document.getElementById('dashDate').textContent=`${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;
+
+renderAppts();
+startScene(0);
+</script>
