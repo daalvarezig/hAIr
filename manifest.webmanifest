@@ -1,11 +1,11 @@
 {
-  "name": "El Chico de Tirso",
-  "short_name": "Tirso",
-  "description": "Dashboard de gestión · Peluquería Premium",
+  "name": "hAIr · Dashboard",
+  "short_name": "hAIr",
+  "description": "Sistema inteligente de gestión para peluquerías",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#0e0e0e",
-  "theme_color": "#0e0e0e",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
   "orientation": "portrait-primary",
   "icons": [
     { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" },

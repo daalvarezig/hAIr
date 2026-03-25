@@ -1,285 +1,820 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#0e0e0e" />
-  <title>El Chico de Tirso</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#0a0a0a"/>
+<meta name="description" content="hAIr · Sistema inteligente de gestión para peluquerías"/>
+<link rel="manifest" href="manifest.webmanifest"/>
+<title>hAIr · Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#161616;
+  --surface:#1a1a1a;--surface2:#202020;
+  --line:#252525;--line2:#303030;
+  --text:#f0ece4;--muted:#5a5550;--soft:#8a8480;
+  --accent:#b8956a;--accent2:#d4b896;--accent3:#7a5f42;
+  --ok:#4a7a5a;--ok2:#6aaa7a;
+  --info:#3a6a9a;--info2:#6a9aca;
+  --warn:#8a6a2a;--warn2:#c9a040;
+  --danger:#7a3a3a;--danger2:#c05050;
+  --r:10px;--r2:16px;--r3:22px;
+  --font-display:'Cormorant Garamond',Georgia,serif;
+  --font-body:'Outfit',system-ui,sans-serif;
+  --topbar:60px;--sidebar:190px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{margin:0}
+
+/* ── SPLASH ── */
+#splash{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;transition:opacity .5s ease}
+#splash.out{opacity:0;pointer-events:none}
+.splash-logo{font-family:var(--font-display);font-size:clamp(48px,10vw,80px);font-weight:400;letter-spacing:-.02em;color:var(--text)}
+.splash-logo span{color:var(--accent);font-style:italic}
+.splash-tagline{font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.splash-bar{width:0;height:1px;background:var(--accent);transition:width 1s ease;max-width:120px}
+.splash-bar.go{width:120px}
+
+/* ── TOPBAR ── */
+.topbar{position:sticky;top:0;z-index:50;height:var(--topbar);display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--bg);border-bottom:1px solid var(--line)}
+.topbar-brand{display:flex;align-items:baseline;gap:8px}
+.topbar-brand .name{font-family:var(--font-display);font-size:20px;font-weight:600;letter-spacing:-.01em}
+.topbar-brand .name span{color:var(--accent);font-style:italic;font-weight:400}
+.salon-selector{display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--surface);border:1px solid var(--line2);border-radius:var(--r);cursor:pointer;font-size:12px;color:var(--soft);transition:all .15s}
+.salon-selector:hover{border-color:var(--accent3);color:var(--text)}
+.salon-name{color:var(--text);font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.lang-toggle{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.lang-btn{padding:5px 10px;border:none;background:transparent;color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;letter-spacing:.05em}
+.lang-btn.active{background:var(--accent);color:#0a0a0a}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--ok2);box-shadow:0 0 8px var(--ok2);animation:pulse 2.5s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.btn-icon{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:transparent;border:1px solid var(--line);border-radius:var(--r);color:var(--soft);cursor:pointer;transition:all .15s}
+.btn-icon:hover{background:var(--surface);color:var(--text)}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:calc(100vh - var(--topbar))}
+
+/* ── SIDEBAR ── */
+.sidebar{background:var(--bg2);border-right:1px solid var(--line);padding:14px 9px;display:flex;flex-direction:column;gap:2px;position:sticky;top:var(--topbar);height:calc(100vh - var(--topbar));overflow-y:auto}
+.nav-section{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 10px 6px;font-weight:500}
+.nav-btn{display:flex;align-items:center;gap:9px;padding:9px 12px;border:none;border-radius:var(--r);background:transparent;color:var(--muted);cursor:pointer;font-size:13px;text-align:left;width:100%;transition:all .15s}
+.nav-btn:hover{background:var(--surface);color:var(--soft)}
+.nav-btn.active{background:var(--surface2);color:var(--text);font-weight:500}
+.nav-btn.active svg{stroke:var(--accent)}
+.nav-btn svg{flex-shrink:0;width:16px;height:16px}
+.sidebar-footer{margin-top:auto;padding:12px 10px;border-top:1px solid var(--line)}
+.sidebar-version{font-size:10px;color:var(--muted)}
+
+/* ── CONTENT ── */
+.content{padding:24px;overflow-y:auto}
+.view{display:none;animation:viewIn .2s ease}
+.view.active{display:block}
+@keyframes viewIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── VIEW HEADER ── */
+.view-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;gap:12px}
+.view-header h2{font-family:var(--font-display);font-size:28px;font-weight:600;letter-spacing:-.01em}
+.view-sub{color:var(--muted);font-size:12px;margin-top:3px}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+
+/* ── KPIs ── */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r2);padding:18px;transition:border-color .15s;position:relative;overflow:hidden}
+.kpi:hover{border-color:var(--line2)}
+.kpi-accent{border-color:rgba(184,149,106,.18)}
+.kpi-accent::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(184,149,106,.04) 0%,transparent 60%);pointer-events:none}
+.kpi-label{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+.kpi-value{font-family:var(--font-display);font-size:32px;font-weight:600;line-height:1;color:var(--text)}
+.kpi-value.accent{color:var(--accent)}
+.kpi-value.small{font-size:18px}
+.kpi-delta{font-size:10px;color:var(--ok2);margin-top:5px}
+
+/* ── PANEL ── */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r3);padding:20px;margin-bottom:16px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.panel-head h3{font-family:var(--font-display);font-size:17px;font-weight:600}
+.panel-sub{color:var(--muted);font-size:11px;margin-top:2px}
+
+/* ── LIST ── */
+.list{display:flex;flex-direction:column;gap:8px}
+.list-empty{text-align:center;padding:28px;color:var(--muted);font-size:13px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;background:var(--bg3);border:1px solid var(--line);border-radius:var(--r2);transition:all .15s;cursor:default}
+.item:hover{border-color:var(--line2);transform:translateX(2px)}
+.item-left{flex:1;min-width:0}
+.item-title{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.item-actions{display:flex;gap:5px;flex-shrink:0}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;letter-spacing:.02em}
+.badge-booked{background:rgba(58,106,154,.15);color:var(--info2);border:1px solid rgba(58,106,154,.25)}
+.badge-confirmed{background:rgba(74,122,90,.15);color:var(--ok2);border:1px solid rgba(74,122,90,.25)}
+.badge-completed{background:rgba(184,149,106,.1);color:var(--accent);border:1px solid rgba(184,149,106,.2)}
+.badge-cancelled{background:rgba(122,58,58,.15);color:var(--danger2);border:1px solid rgba(122,58,58,.25)}
+.badge-no_show{background:rgba(90,85,80,.1);color:var(--soft);border:1px solid var(--line)}
+
+/* ── SERVICES GRID ── */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.svc-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r2);padding:18px 16px;transition:all .15s;cursor:default}
+.svc-card:hover{border-color:rgba(184,149,106,.3);transform:translateY(-1px)}
+.svc-icon{font-size:22px;margin-bottom:10px;display:block}
+.svc-name{font-family:var(--font-display);font-size:16px;font-weight:600;margin-bottom:4px}
+.svc-cat{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.svc-durations{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.svc-dur{font-size:10px;color:var(--soft);background:var(--bg3);border:1px solid var(--line);border-radius:20px;padding:3px 8px}
+
+/* ── SALONS GRID ── */
+.salons-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.salon-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r2);padding:18px;transition:all .15s;cursor:pointer}
+.salon-card:hover{border-color:var(--accent3);transform:translateY(-1px)}
+.salon-card.active-salon{border-color:var(--accent);background:linear-gradient(135deg,var(--surface) 0%,#1c1810 100%)}
+.salon-avatar{width:44px;height:44px;border-radius:var(--r);background:var(--surface2);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--accent);margin-bottom:12px}
+.salon-card-name{font-weight:500;font-size:14px;margin-bottom:3px}
+.salon-card-meta{font-size:11px;color:var(--muted)}
+.salon-card-stats{display:flex;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.salon-stat{font-size:11px;color:var(--muted)}
+.salon-stat strong{display:block;font-size:16px;font-family:var(--font-display);font-weight:600;color:var(--text);margin-bottom:1px}
+
+/* ── BUTTONS ── */
+.btn-primary{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--accent);color:#0a0a0a;border:none;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;background:transparent;color:var(--soft);border:1px solid var(--line);border-radius:var(--r);font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-ghost:hover{background:var(--surface);color:var(--text);border-color:var(--line2)}
+.btn-status{padding:4px 9px;background:transparent;border:1px solid var(--line);border-radius:6px;color:var(--soft);font-size:11px;cursor:pointer;transition:all .12s}
+.btn-status:hover{background:var(--surface2)}
+.s-confirm:hover{border-color:var(--info);color:var(--info2)}
+.s-complete:hover{border-color:var(--accent3);color:var(--accent)}
+.s-cancel:hover{border-color:var(--danger);color:var(--danger2)}
+.hidden{display:none!important}
+
+/* ── FORM ── */
+.form{display:flex;flex-direction:column;gap:14px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.form label{display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.form input,.form select,.form textarea{background:var(--bg3);border:1px solid var(--line);border-radius:var(--r);padding:9px 12px;color:var(--text);font-size:13px;transition:border-color .15s;-webkit-appearance:none}
+.form input:focus,.form select:focus,.form textarea:focus{outline:none;border-color:var(--accent)}
+.form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+.input-date{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:7px 11px;color:var(--text);font-size:12px;font-family:var(--font-body);transition:border-color .15s}
+.input-date:focus{outline:none;border-color:var(--accent)}
+.settings-section{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--soft);border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:2px}
+
+/* ── MODAL ── */
+dialog{background:var(--bg2);border:1px solid var(--line2);border-radius:var(--r3);padding:0;max-width:520px;width:calc(100vw - 28px);box-shadow:0 20px 60px rgba(0,0,0,.8);color:var(--text)}
+dialog::backdrop{background:rgba(0,0,0,.8);backdrop-filter:blur(6px)}
+.modal-inner{padding:24px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-head h3{font-family:var(--font-display);font-size:22px;font-weight:600}
+.modal-close{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:4px;border-radius:6px;transition:color .15s}
+.modal-close:hover{color:var(--text)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface2);border:1px solid var(--line2);color:var(--text);font-size:12px;padding:9px 18px;border-radius:100px;opacity:0;transition:all .25s;z-index:9999;pointer-events:none;white-space:nowrap;font-family:var(--font-body)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:rgba(192,80,80,.4);background:#1a1010}
+.toast.ok{border-color:rgba(74,122,90,.4);background:#0f1a12}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  :root{--sidebar:0px}
+  .layout{grid-template-columns:1fr}
+  .sidebar{position:sticky;top:var(--topbar);z-index:40;height:auto;flex-direction:row;padding:6px 8px;overflow-x:auto;border-right:none;border-bottom:1px solid var(--line);gap:2px}
+  .nav-section{display:none}
+  .nav-btn{flex-direction:column;gap:3px;font-size:10px;padding:7px 10px;min-width:56px;text-align:center;align-items:center}
+  .sidebar-footer{display:none}
+  .kpis{grid-template-columns:1fr 1fr}
+  .services-grid{grid-template-columns:1fr 1fr}
+  .content{padding:14px}
+}
+@media(max-width:580px){
+  .kpis{grid-template-columns:1fr 1fr;gap:8px}
+  .services-grid{grid-template-columns:1fr 1fr}
+  .form-row,.form-row-3{grid-template-columns:1fr}
+  .item{flex-direction:column;align-items:flex-start}
+  .item-actions{width:100%}
+  .topbar-brand .name{font-size:17px}
+  .salons-grid{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
 
-  <!-- SPLASH -->
-  <div id="splash">
-    <div class="splash-inner">
-      <div class="splash-logo">
-        <span>El Chico</span>
-        <em>de Tirso</em>
+<div id="toast" class="toast"></div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">h<span>AI</span>r</div>
+  <div class="splash-bar" id="splashBar"></div>
+  <div class="splash-tagline" id="splashTagline">Cargando...</div>
+</div>
+
+<div id="app" style="opacity:0;transition:opacity .4s ease">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <div class="name">h<span>AI</span>r</div>
+      <div class="salon-selector" id="salonSelector" onclick="switchView('salons')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span class="salon-name" id="currentSalonName">Seleccionar salón</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
       </div>
-      <div class="splash-line"></div>
-      <p class="splash-sub">Dashboard · Peluquería Premium</p>
     </div>
-  </div>
-
-  <div id="app" class="app-hidden">
-    <header class="topbar">
-      <div class="topbar-brand">
-        <h1>El Chico <em>de Tirso</em></h1>
+    <div class="topbar-right">
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="langES" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" id="langEN" onclick="setLang('en')">EN</button>
       </div>
-      <div class="topbar-actions">
-        <button id="installBtn" class="btn-ghost hidden">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13M5 13l7 7 7-7"/><path d="M3 21h18"/></svg>
-          Instalar
-        </button>
-        <button id="refreshBtn" class="btn-ghost">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-          Actualizar
-        </button>
-        <div class="dot-live"></div>
+      <button class="btn-icon" id="refreshBtn" title="Actualizar" onclick="fetchData();showToast(T('refreshing'))">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+      </button>
+      <div class="live-dot"></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <span class="nav-section" data-i="nav_main">Principal</span>
+      <button class="nav-btn active" data-view="dashboard" onclick="swv(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span data-i="nav_dashboard">Dashboard</span>
+      </button>
+      <button class="nav-btn" data-view="appointments" onclick="swv(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span data-i="nav_appointments">Citas</span>
+      </button>
+      <button class="nav-btn" data-view="clients" onclick="swv(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 8v6M22 11h-6"/></svg>
+        <span data-i="nav_clients">Clientes</span>
+      </button>
+      <button class="nav-btn" data-view="services" onclick="swv(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        <span data-i="nav_services">Servicios</span>
+      </button>
+      <span class="nav-section" data-i="nav_manage">Gestión</span>
+      <button class="nav-btn" data-view="salons" onclick="swv(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span data-i="nav_salons">Salones</span>
+      </button>
+      <button class="nav-btn" data-view="settings" onclick="swv(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span data-i="nav_settings">Ajustes</span>
+      </button>
+      <div class="sidebar-footer">
+        <div class="sidebar-version">hAIr v1.0 · <span data-i="powered">Powered by itopy.ai</span></div>
       </div>
-    </header>
+    </nav>
 
-    <div class="layout">
-      <nav class="sidebar">
-        <button class="nav-btn active" data-view="dashboard">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-          Dashboard
-        </button>
-        <button class="nav-btn" data-view="appointments">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-          Citas
-        </button>
-        <button class="nav-btn" data-view="clients">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 8v6M22 11h-6"/></svg>
-          Clientes
-        </button>
-        <button class="nav-btn" data-view="services">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a7 7 0 0 1 7 7c0 4-7 13-7 13S5 13 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2"/></svg>
-          Servicios
-        </button>
-        <button class="nav-btn" data-view="settings">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          Ajustes
-        </button>
-      </nav>
+    <!-- MAIN CONTENT -->
+    <main class="content">
 
-      <main class="content">
-
-        <!-- DASHBOARD -->
-        <section id="dashboard" class="view active">
-          <div class="view-header">
-            <div>
-              <h2>Buenos días</h2>
-              <p class="view-date" id="todayLabel"></p>
-            </div>
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="view active">
+        <div class="view-header">
+          <div>
+            <h2 data-i="dash_title">Buenos días</h2>
+            <p class="view-sub" id="dashDate"></p>
           </div>
+          <button class="btn-primary" onclick="document.getElementById('modalAppt').showModal()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            <span data-i="new_appt">Nueva cita</span>
+          </button>
+        </div>
+        <div class="kpis">
+          <article class="kpi"><span class="kpi-label" data-i="kpi_today">Citas hoy</span><strong class="kpi-value" id="k1">0</strong></article>
+          <article class="kpi"><span class="kpi-label" data-i="kpi_pending">Pendientes</span><strong class="kpi-value" id="k2">0</strong></article>
+          <article class="kpi kpi-accent"><span class="kpi-label" data-i="kpi_next">Próxima</span><strong class="kpi-value accent small" id="k3">—</strong></article>
+          <article class="kpi"><span class="kpi-label" data-i="kpi_noshow">No show</span><strong class="kpi-value" id="k4">0</strong></article>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3 data-i="today_agenda">Agenda de hoy</h3></div>
+          <div class="list" id="todayList"></div>
+        </div>
+      </section>
 
-          <div class="kpis">
-            <article class="kpi">
-              <span class="kpi-label">Citas hoy</span>
-              <strong id="kpiToday" class="kpi-value">0</strong>
-            </article>
-            <article class="kpi">
-              <span class="kpi-label">Pendientes</span>
-              <strong id="kpiPending" class="kpi-value">0</strong>
-            </article>
-            <article class="kpi kpi-accent">
-              <span class="kpi-label">Próxima cita</span>
-              <strong id="kpiNext" class="kpi-value kpi-time">—</strong>
-            </article>
-            <article class="kpi">
-              <span class="kpi-label">No show</span>
-              <strong id="kpiNoShow" class="kpi-value">0</strong>
-            </article>
-          </div>
-
-          <div class="panel">
-            <div class="panel-head">
-              <h3>Agenda de hoy</h3>
-              <button class="btn-primary" data-open-modal="newAppointmentModal">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                Nueva cita
-              </button>
-            </div>
-            <div id="todayList" class="list"></div>
-          </div>
-        </section>
-
-        <!-- CITAS -->
-        <section id="appointments" class="view">
-          <div class="view-header">
-            <h2>Citas</h2>
-            <div class="header-row">
-              <input id="dateFilter" type="date" class="input-date" />
-              <button class="btn-primary" data-open-modal="newAppointmentModal">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                Nueva
-              </button>
-            </div>
-          </div>
-          <div class="panel">
-            <div id="appointmentsList" class="list"></div>
-          </div>
-        </section>
-
-        <!-- CLIENTES -->
-        <section id="clients" class="view">
-          <div class="view-header">
-            <h2>Clientes</h2>
-            <button class="btn-primary" data-open-modal="newClientModal">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-              Nuevo cliente
+      <!-- CITAS -->
+      <section id="appointments" class="view">
+        <div class="view-header">
+          <div><h2 data-i="nav_appointments">Citas</h2></div>
+          <div class="header-actions">
+            <input type="date" id="dateFilter" class="input-date" onchange="renderAppts()"/>
+            <button class="btn-primary" onclick="document.getElementById('modalAppt').showModal()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+              <span data-i="new_appt">Nueva cita</span>
             </button>
           </div>
-          <div class="panel">
-            <div id="clientsList" class="list"></div>
-          </div>
-        </section>
+        </div>
+        <div class="panel"><div class="list" id="apptList"></div></div>
+      </section>
 
-        <!-- SERVICIOS -->
-        <section id="services" class="view">
-          <div class="view-header">
-            <h2>Servicios</h2>
-          </div>
-          <div class="services-grid" id="servicesList"></div>
-        </section>
+      <!-- CLIENTES -->
+      <section id="clients" class="view">
+        <div class="view-header">
+          <div><h2 data-i="nav_clients">Clientes</h2></div>
+          <button class="btn-primary" onclick="document.getElementById('modalClient').showModal()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            <span data-i="new_client">Nuevo cliente</span>
+          </button>
+        </div>
+        <div class="panel"><div class="list" id="clientList"></div></div>
+      </section>
 
-        <!-- AJUSTES -->
-        <section id="settings" class="view">
-          <div class="view-header">
-            <h2>Ajustes</h2>
-          </div>
-          <div class="panel settings-panel">
-            <h3 class="settings-section">Horario del salón</h3>
-            <form id="settingsForm" class="form">
-              <div class="form-row">
-                <label>Apertura
-                  <input type="time" id="openTime" value="10:00" />
-                </label>
-                <label>Cierre
-                  <input type="time" id="closeTime" value="19:00" />
-                </label>
-              </div>
-              <h3 class="settings-section">Recordatorios automáticos</h3>
-              <div class="form-row">
-                <label>Recordatorio 24h
-                  <select id="reminder24">
-                    <option value="true">Activo</option>
-                    <option value="false">Inactivo</option>
-                  </select>
-                </label>
-                <label>Recordatorio 2h
-                  <select id="reminder2">
-                    <option value="true">Activo</option>
-                    <option value="false">Inactivo</option>
-                  </select>
-                </label>
-              </div>
-              <h3 class="settings-section">Conexión Supabase</h3>
-              <label>Supabase URL
-                <input type="text" id="supabaseUrl" placeholder="https://xxxx.supabase.co" />
+      <!-- SERVICIOS -->
+      <section id="services" class="view">
+        <div class="view-header"><div><h2 data-i="nav_services">Servicios</h2></div></div>
+        <div class="services-grid" id="svcGrid"></div>
+      </section>
+
+      <!-- SALONES -->
+      <section id="salons" class="view">
+        <div class="view-header">
+          <div><h2 data-i="nav_salons">Salones</h2><p class="view-sub" data-i="salons_sub">Selecciona el salón activo</p></div>
+          <button class="btn-primary" onclick="document.getElementById('modalSalon').showModal()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            <span data-i="new_salon">Nuevo salón</span>
+          </button>
+        </div>
+        <div class="salons-grid" id="salonGrid"></div>
+      </section>
+
+      <!-- AJUSTES -->
+      <section id="settings" class="view">
+        <div class="view-header"><div><h2 data-i="nav_settings">Ajustes</h2></div></div>
+        <div class="panel" style="max-width:560px">
+          <form class="form" onsubmit="saveSettings(event)">
+            <p class="settings-section" data-i="set_hours">Horario del salón</p>
+            <div class="form-row">
+              <label><span data-i="set_open">Apertura</span><input type="time" id="openTime" value="10:00"/></label>
+              <label><span data-i="set_close">Cierre</span><input type="time" id="closeTime" value="19:00"/></label>
+            </div>
+            <p class="settings-section" data-i="set_reminders">Recordatorios automáticos</p>
+            <div class="form-row">
+              <label><span data-i="set_rem24">Recordatorio 24h</span>
+                <select id="rem24"><option value="true" data-i="active">Activo</option><option value="false" data-i="inactive">Inactivo</option></select>
               </label>
-              <label>Supabase anon key
-                <textarea id="supabaseKey" rows="3" placeholder="Pega aquí tu anon key…"></textarea>
+              <label><span data-i="set_rem2">Recordatorio 2h</span>
+                <select id="rem2"><option value="true" data-i="active">Activo</option><option value="false" data-i="inactive">Inactivo</option></select>
               </label>
-              <button class="btn-primary" type="submit">Guardar ajustes</button>
-            </form>
-          </div>
-        </section>
+            </div>
+            <p class="settings-section">Supabase</p>
+            <label>URL<input type="text" id="sbUrl" placeholder="https://xxxx.supabase.co"/></label>
+            <label>Anon key<textarea id="sbKey" rows="3" placeholder="eyJ..."></textarea></label>
+            <div class="form-actions"><button type="submit" class="btn-primary" data-i="save">Guardar ajustes</button></div>
+          </form>
+        </div>
+      </section>
 
-      </main>
-    </div>
+    </main>
   </div>
+</div>
 
-  <!-- MODAL NUEVA CITA -->
-  <dialog id="newAppointmentModal">
-    <div class="modal-inner">
-      <div class="modal-head">
-        <h3>Nueva cita</h3>
-        <button class="modal-close" onclick="document.getElementById('newAppointmentModal').close()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <form class="form" id="appointmentForm">
-        <div class="form-row">
-          <label>Nombre
-            <input id="apptClientName" required placeholder="Ana García" />
-          </label>
-          <label>Teléfono
-            <input id="apptClientPhone" required placeholder="+34 600 000 000" />
-          </label>
-        </div>
-        <div class="form-row">
-          <label>Servicio
-            <select id="apptService"></select>
-          </label>
-          <label>Longitud
-            <select id="apptHairLength">
-              <option value="short">Corto</option>
-              <option value="medium">Medio</option>
-              <option value="long">Largo</option>
-            </select>
-          </label>
-        </div>
-        <div class="form-row">
-          <label>Fecha
-            <input id="apptDate" type="date" required />
-          </label>
-          <label>Hora
-            <input id="apptTime" type="time" required />
-          </label>
-        </div>
-        <label>Notas
-          <textarea id="apptNotes" rows="2" placeholder="Observaciones…"></textarea>
-        </label>
-        <div class="form-actions">
-          <button type="button" class="btn-ghost" onclick="document.getElementById('newAppointmentModal').close()">Cancelar</button>
-          <button type="submit" class="btn-primary">Guardar cita</button>
-        </div>
-      </form>
+<!-- MODAL CITA -->
+<dialog id="modalAppt">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <h3 data-i="new_appt">Nueva cita</h3>
+      <button class="modal-close" onclick="document.getElementById('modalAppt').close()">✕</button>
     </div>
-  </dialog>
-
-  <!-- MODAL NUEVO CLIENTE -->
-  <dialog id="newClientModal">
-    <div class="modal-inner">
-      <div class="modal-head">
-        <h3>Nuevo cliente</h3>
-        <button class="modal-close" onclick="document.getElementById('newClientModal').close()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
+    <form class="form" id="apptForm" onsubmit="saveAppt(event)">
+      <div class="form-row">
+        <label><span data-i="field_name">Nombre</span><input id="aN" required placeholder="Ana García"/></label>
+        <label><span data-i="field_phone">Teléfono</span><input id="aP" required placeholder="+34 600 000 000"/></label>
       </div>
-      <form class="form" id="clientForm">
-        <label>Nombre completo
-          <input id="clientName" required placeholder="Ana García" />
+      <div class="form-row">
+        <label><span data-i="field_service">Servicio</span><select id="aS"></select></label>
+        <label><span data-i="field_length">Largo de pelo</span>
+          <select id="aL">
+            <option value="short" data-i="hair_short">Corto</option>
+            <option value="medium" data-i="hair_medium">Medio</option>
+            <option value="long" data-i="hair_long">Largo</option>
+          </select>
         </label>
-        <label>Teléfono
-          <input id="clientPhone" required placeholder="+34 600 000 000" />
-        </label>
-        <label>Notas
-          <textarea id="clientNotes" rows="2" placeholder="Preferencias, alergias…"></textarea>
-        </label>
-        <div class="form-actions">
-          <button type="button" class="btn-ghost" onclick="document.getElementById('newClientModal').close()">Cancelar</button>
-          <button type="submit" class="btn-primary">Guardar cliente</button>
-        </div>
-      </form>
+      </div>
+      <div class="form-row">
+        <label><span data-i="field_date">Fecha</span><input type="date" id="aD" required/></label>
+        <label><span data-i="field_time">Hora</span><input type="time" id="aT" required/></label>
+      </div>
+      <label><span data-i="field_notes">Notas</span><textarea id="aNt" rows="2" placeholder="Observaciones…"></textarea></label>
+      <div class="form-actions">
+        <button type="button" class="btn-ghost" onclick="document.getElementById('modalAppt').close()" data-i="cancel">Cancelar</button>
+        <button type="submit" class="btn-primary" data-i="save_appt">Guardar cita</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<!-- MODAL CLIENTE -->
+<dialog id="modalClient">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <h3 data-i="new_client">Nuevo cliente</h3>
+      <button class="modal-close" onclick="document.getElementById('modalClient').close()">✕</button>
     </div>
-  </dialog>
-
-  <template id="itemTemplate">
-    <article class="item">
-      <div class="item-main">
-        <strong class="item-title"></strong>
-        <p class="item-sub"></p>
+    <form class="form" id="clientForm" onsubmit="saveClient(event)">
+      <label><span data-i="field_name">Nombre completo</span><input id="cN" required placeholder="Ana García"/></label>
+      <label><span data-i="field_phone">Teléfono</span><input id="cP" required placeholder="+34 600 000 000"/></label>
+      <label><span data-i="field_notes">Notas</span><textarea id="cNt" rows="2" placeholder="Preferencias, alergias…"></textarea></label>
+      <div class="form-actions">
+        <button type="button" class="btn-ghost" onclick="document.getElementById('modalClient').close()" data-i="cancel">Cancelar</button>
+        <button type="submit" class="btn-primary" data-i="save_client">Guardar cliente</button>
       </div>
-      <div class="item-actions"></div>
-    </article>
-  </template>
+    </form>
+  </div>
+</dialog>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js"></script>
+<!-- MODAL SALÓN -->
+<dialog id="modalSalon">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <h3 data-i="new_salon">Nuevo salón</h3>
+      <button class="modal-close" onclick="document.getElementById('modalSalon').close()">✕</button>
+    </div>
+    <form class="form" id="salonForm" onsubmit="saveSalon(event)">
+      <label><span data-i="salon_name">Nombre del salón</span><input id="sNm" required placeholder="El Chico de Tirso"/></label>
+      <div class="form-row">
+        <label><span data-i="salon_city">Ciudad</span><input id="sCt" placeholder="Madrid"/></label>
+        <label><span data-i="salon_phone">Teléfono</span><input id="sPh" placeholder="+34 600 000 000"/></label>
+      </div>
+      <label><span data-i="salon_address">Dirección</span><input id="sAd" placeholder="Calle Tirso de Molina, 12"/></label>
+      <div class="form-actions">
+        <button type="button" class="btn-ghost" onclick="document.getElementById('modalSalon').close()" data-i="cancel">Cancelar</button>
+        <button type="submit" class="btn-primary" data-i="save_salon">Guardar salón</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ── i18n ── */
+const LANG = {
+  es:{
+    nav_main:'Principal',nav_manage:'Gestión',nav_dashboard:'Dashboard',nav_appointments:'Citas',nav_clients:'Clientes',nav_services:'Servicios',nav_salons:'Salones',nav_settings:'Ajustes',
+    dash_title:'Buenos días',kpi_today:'Citas hoy',kpi_pending:'Pendientes',kpi_next:'Próxima',kpi_noshow:'No show',
+    today_agenda:'Agenda de hoy',new_appt:'Nueva cita',new_client:'Nuevo cliente',new_salon:'Nuevo salón',
+    field_name:'Nombre',field_phone:'Teléfono',field_service:'Servicio',field_length:'Largo de pelo',field_date:'Fecha',field_time:'Hora',field_notes:'Notas',
+    hair_short:'Corto',hair_medium:'Medio',hair_long:'Largo',
+    salon_name:'Nombre del salón',salon_city:'Ciudad',salon_phone:'Teléfono',salon_address:'Dirección',
+    salons_sub:'Selecciona el salón activo',
+    set_hours:'Horario del salón',set_open:'Apertura',set_close:'Cierre',set_reminders:'Recordatorios automáticos',set_rem24:'Recordatorio 24h',set_rem2:'Recordatorio 2h',
+    active:'Activo',inactive:'Inactivo',
+    cancel:'Cancelar',save:'Guardar ajustes',save_appt:'Guardar cita',save_client:'Guardar cliente',save_salon:'Guardar salón',
+    powered:'Powered by itopy.ai',
+    status_booked:'Reservada',status_confirmed:'Confirmada',status_completed:'Completada',status_cancelled:'Cancelada',status_no_show:'No show',
+    btn_confirm:'Confirmar',btn_complete:'Completar',btn_cancel:'Cancelar',
+    hair_s:'Corto',hair_m:'Medio',hair_l:'Largo',
+    toast_saved:'Guardado',toast_settings:'Ajustes guardados',toast_status:'Estado actualizado',refreshing:'Actualizando…',
+    empty_appts:'Sin citas para este día',empty_clients:'Sin clientes registrados',empty_today:'Sin citas para hoy',
+    select_salon:'Seleccionar salón',no_salon:'Elige un salón en la sección Salones'
+  },
+  en:{
+    nav_main:'Main',nav_manage:'Management',nav_dashboard:'Dashboard',nav_appointments:'Appointments',nav_clients:'Clients',nav_services:'Services',nav_salons:'Salons',nav_settings:'Settings',
+    dash_title:'Good morning',kpi_today:'Today',kpi_pending:'Pending',kpi_next:'Next',kpi_noshow:'No show',
+    today_agenda:"Today's agenda",new_appt:'New appointment',new_client:'New client',new_salon:'New salon',
+    field_name:'Name',field_phone:'Phone',field_service:'Service',field_length:'Hair length',field_date:'Date',field_time:'Time',field_notes:'Notes',
+    hair_short:'Short',hair_medium:'Medium',hair_long:'Long',
+    salon_name:'Salon name',salon_city:'City',salon_phone:'Phone',salon_address:'Address',
+    salons_sub:'Select active salon',
+    set_hours:'Salon hours',set_open:'Opening',set_close:'Closing',set_reminders:'Automatic reminders',set_rem24:'24h reminder',set_rem2:'2h reminder',
+    active:'Active',inactive:'Inactive',
+    cancel:'Cancel',save:'Save settings',save_appt:'Save appointment',save_client:'Save client',save_salon:'Save salon',
+    powered:'Powered by itopy.ai',
+    status_booked:'Booked',status_confirmed:'Confirmed',status_completed:'Completed',status_cancelled:'Cancelled',status_no_show:'No show',
+    btn_confirm:'Confirm',btn_complete:'Complete',btn_cancel:'Cancel',
+    hair_s:'Short',hair_m:'Medium',hair_l:'Long',
+    toast_saved:'Saved',toast_settings:'Settings saved',toast_status:'Status updated',refreshing:'Refreshing…',
+    empty_appts:'No appointments for this day',empty_clients:'No clients registered',empty_today:'No appointments today',
+    select_salon:'Select salon',no_salon:'Choose a salon in the Salons section'
+  }
+};
+let lang = localStorage.getItem('hair_lang') || 'es';
+function T(k){return LANG[lang][k]||k}
+function setLang(l){
+  lang=l;localStorage.setItem('hair_lang',l);
+  document.getElementById('langES').classList.toggle('active',l==='es');
+  document.getElementById('langEN').classList.toggle('active',l==='en');
+  document.documentElement.lang=l;
+  applyTranslations();renderAll();
+}
+function applyTranslations(){
+  document.querySelectorAll('[data-i]').forEach(el=>{
+    const k=el.dataset.i;if(LANG[lang][k])el.textContent=LANG[lang][k];
+  });
+}
+
+/* ── STATE ── */
+const S={
+  sb:null,lang:'es',
+  salons:[],activeSalon:null,
+  services:[],appointments:[],clients:[],
+  settings:{openTime:'10:00',closeTime:'19:00',rem24:'true',rem2:'true',sbUrl:'',sbKey:''}
+};
+const DEFAULT_SVCS=[
+  {id:'s1',name:'peinar',category:'Peinado',base_duration_short:25,icon:'✂️'},
+  {id:'s2',name:'cortar_y_peinar',category:'Corte',base_duration_short:40,icon:'💈'},
+  {id:'s3',name:'tinte',category:'Color',base_duration_short:40,icon:'🎨'},
+  {id:'s4',name:'barros',category:'Color',base_duration_short:40,icon:'🌿'},
+  {id:'s5',name:'mechas',category:'Color',base_duration_short:60,icon:'✨'},
+  {id:'s6',name:'rayos_de_sol',category:'Color',base_duration_short:60,icon:'☀️'}
+];
+const DEFAULT_SALONS=[
+  {id:'sal1',name:'El Chico de Tirso',city:'Madrid',phone:'+34 600 000 001',address:'Calle Tirso de Molina, 12'},
+  {id:'sal2',name:'Studio Eleven',city:'Barcelona',phone:'+34 600 000 002',address:'Passeig de Gràcia, 11'}
+];
+
+/* ── UTILS ── */
+function pretty(n){return(n||'').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}
+function hairLabel(v){return{short:T('hair_s'),medium:T('hair_m'),long:T('hair_l')}[v]||v||'—'}
+function statusLabel(v){return T('status_'+v)||v}
+function fdt(v){const d=new Date(v);if(isNaN(d))return v||'—';return new Intl.DateTimeFormat(lang==='es'?'es-ES':'en-GB',{dateStyle:'short',timeStyle:'short'}).format(d)}
+function ft(v){const d=new Date(v);if(isNaN(d))return'—';return new Intl.DateTimeFormat(lang==='es'?'es-ES':'en-GB',{timeStyle:'short'}).format(d)}
+function badgeClass(s){return{booked:'badge-booked',confirmed:'badge-confirmed',completed:'badge-completed',cancelled:'badge-cancelled',no_show:'badge-no_show'}[s]||'badge-booked'}
+
+/* ── TOAST ── */
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+(type?'toast-'+type:'');
+  setTimeout(()=>t.classList.add('show'),10);
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+/* ── NAVIGATION ── */
+function swv(btn){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(btn.dataset.view).classList.add('active');
+}
+function switchView(id){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===id));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
+}
+
+/* ── SETTINGS ── */
+function loadSettings(){
+  const raw=localStorage.getItem('hair_settings');
+  if(raw)try{S.settings={...S.settings,...JSON.parse(raw)}}catch{}
+  document.getElementById('openTime').value=S.settings.openTime;
+  document.getElementById('closeTime').value=S.settings.closeTime;
+  document.getElementById('rem24').value=S.settings.rem24;
+  document.getElementById('rem2').value=S.settings.rem2;
+  document.getElementById('sbUrl').value=S.settings.sbUrl;
+  document.getElementById('sbKey').value=S.settings.sbKey;
+  maybeInitSB();
+}
+function saveSettings(e){
+  e.preventDefault();
+  S.settings={
+    openTime:document.getElementById('openTime').value,
+    closeTime:document.getElementById('closeTime').value,
+    rem24:document.getElementById('rem24').value,
+    rem2:document.getElementById('rem2').value,
+    sbUrl:document.getElementById('sbUrl').value.trim(),
+    sbKey:document.getElementById('sbKey').value.trim()
+  };
+  localStorage.setItem('hair_settings',JSON.stringify(S.settings));
+  maybeInitSB();
+  showToast(T('toast_settings'),'ok');
+}
+function maybeInitSB(){
+  if(S.settings.sbUrl&&S.settings.sbKey&&window.supabase){
+    S.sb=window.supabase.createClient(S.settings.sbUrl,S.settings.sbKey);
+  }
+}
+
+/* ── RENDER SALONS ── */
+function renderSalons(){
+  const g=document.getElementById('salonGrid');g.innerHTML='';
+  const data=S.salons.length?S.salons:DEFAULT_SALONS;
+  data.forEach(sal=>{
+    const initials=sal.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    const apptCount=S.appointments.filter(a=>a.salon_id===sal.id).length;
+    const isActive=S.activeSalon&&S.activeSalon.id===sal.id;
+    const c=document.createElement('div');
+    c.className='salon-card'+(isActive?' active-salon':'');
+    c.innerHTML=`<div class="salon-avatar">${initials}</div>
+      <div class="salon-card-name">${sal.name}</div>
+      <div class="salon-card-meta">${sal.city||''}${sal.address?' · '+sal.address:''}</div>
+      <div class="salon-card-stats">
+        <div class="salon-stat"><strong>${apptCount}</strong>${lang==='es'?'citas':'appts'}</div>
+        ${sal.phone?`<div class="salon-stat"><strong style="font-size:12px;font-family:var(--font-body)">${sal.phone}</strong>${lang==='es'?'teléfono':'phone'}</div>`:''}
+      </div>`;
+    c.onclick=()=>setActiveSalon(sal);
+    g.appendChild(c);
+  });
+}
+
+function setActiveSalon(sal){
+  S.activeSalon=sal;
+  localStorage.setItem('hair_active_salon',JSON.stringify(sal));
+  document.getElementById('currentSalonName').textContent=sal.name;
+  renderSalons();
+  showToast(sal.name,'ok');
+}
+
+/* ── RENDER SERVICES ── */
+function renderSvcs(){
+  const g=document.getElementById('svcGrid');g.innerHTML='';
+  const sel=document.getElementById('aS');sel.innerHTML='';
+  const data=S.services.length?S.services:DEFAULT_SVCS;
+  data.forEach(s=>{
+    const c=document.createElement('article');c.className='svc-card';
+    c.innerHTML=`<span class="svc-icon" style="font-size:20px">${s.icon||'✂️'}</span>
+      <div class="svc-name">${pretty(s.name)}</div>
+      <div class="svc-cat">${s.category}</div>
+      <div class="svc-durations">
+        <span class="svc-dur">${T('hair_s')} ${s.base_duration_short}min</span>
+        <span class="svc-dur">${T('hair_m')} ${s.base_duration_short+15}min</span>
+        <span class="svc-dur">${T('hair_l')} ${s.base_duration_short+30}min</span>
+      </div>`;
+    g.appendChild(c);
+    const o=document.createElement('option');o.value=s.id||s.name;o.textContent=pretty(s.name);sel.appendChild(o);
+  });
+}
+
+/* ── RENDER CLIENTS ── */
+function renderClients(){
+  const t=document.getElementById('clientList');t.innerHTML='';
+  if(!S.clients.length){t.innerHTML=`<p class="list-empty">${T('empty_clients')}</p>`;return}
+  S.clients.forEach(c=>{
+    const el=document.createElement('div');el.className='item';
+    el.innerHTML=`<div class="item-left"><div class="item-title">${c.full_name}</div><div class="item-sub">${c.phone}${c.notes?' · '+c.notes:''}</div></div>`;
+    t.appendChild(el);
+  });
+}
+
+/* ── RENDER APPOINTMENTS ── */
+function apptNode(a){
+  const el=document.createElement('div');el.className='item';
+  const badge=`<span class="badge ${badgeClass(a.status)}">${statusLabel(a.status)}</span>`;
+  el.innerHTML=`<div class="item-left">
+    <div class="item-title">${a.client_name||'Cliente'} <span style="color:var(--accent);font-weight:300">·</span> ${pretty(a.service_name||'Servicio')}</div>
+    <div class="item-sub">${fdt(a.starts_at)} · ${hairLabel(a.hair_length)} ${badge}</div>
+  </div><div class="item-actions" id="ia${a.id}"></div>`;
+  const act=el.querySelector(`#ia${a.id}`);
+  if(!['completed','cancelled'].includes(a.status)){
+    [['confirmed','s-confirm',T('btn_confirm')],['completed','s-complete',T('btn_complete')],['cancelled','s-cancel',T('btn_cancel')]].forEach(([st,cls,lbl])=>{
+      if(a.status===st)return;
+      const b=document.createElement('button');b.className=`btn-status ${cls}`;b.textContent=lbl;
+      b.onclick=()=>updateStatus(a.id,st);act.appendChild(b);
+    });
+  }
+  return el;
+}
+
+function renderAppts(){
+  const all=document.getElementById('apptList');
+  const today=document.getElementById('todayList');
+  all.innerHTML='';today.innerHTML='';
+  const fd=document.getElementById('dateFilter').value;
+  const now=new Date().toISOString().slice(0,10);
+  const sorted=[...S.appointments].sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at));
+  sorted.forEach(a=>{if((a.starts_at||'').slice(0,10)===now)today.appendChild(apptNode(a))});
+  const filtered=fd?sorted.filter(a=>(a.starts_at||'').slice(0,10)===fd):sorted;
+  filtered.forEach(a=>all.appendChild(apptNode(a)));
+  if(!today.children.length)today.innerHTML=`<p class="list-empty">${T('empty_today')}</p>`;
+  if(!filtered.length)all.innerHTML=`<p class="list-empty">${T('empty_appts')}</p>`;
+  const ta=sorted.filter(a=>(a.starts_at||'').slice(0,10)===now);
+  document.getElementById('k1').textContent=ta.length;
+  document.getElementById('k2').textContent=sorted.filter(a=>['booked','confirmed'].includes(a.status)).length;
+  document.getElementById('k4').textContent=sorted.filter(a=>a.status==='no_show').length;
+  const nxt=sorted.find(a=>new Date(a.starts_at)>new Date()&&['booked','confirmed'].includes(a.status));
+  document.getElementById('k3').textContent=nxt?ft(nxt.starts_at):'—';
+  const days_es=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const days_en=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months_es=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const months_en=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const n=new Date();
+  const days=lang==='es'?days_es:days_en;
+  const months=lang==='es'?months_es:months_en;
+  document.getElementById('dashDate').textContent=`${days[n.getDay()]}, ${n.getDate()} de ${months[n.getMonth()]}`;
+  document.querySelector('[data-i="dash_title"]').textContent=T('dash_title');
+}
+
+/* ── FETCH ── */
+async function fetchData(){
+  if(!S.sb){loadDemo();return}
+  try{
+    const [{data:svcs},{data:clients},{data:appts}]=await Promise.all([
+      S.sb.from('services').select('*').order('name'),
+      S.sb.from('clients').select('*').order('full_name'),
+      S.sb.from('appointments_with_details').select('*').order('starts_at')
+    ]);
+    S.services=svcs||[];S.clients=clients||[];S.appointments=appts||[];
+    renderAll();
+  }catch(err){showToast(err.message,'err')}
+}
+
+function loadDemo(){
+  S.services=DEFAULT_SVCS;
+  S.salons=DEFAULT_SALONS;
+  if(!S.activeSalon)S.activeSalon=DEFAULT_SALONS[0];
+  document.getElementById('currentSalonName').textContent=S.activeSalon.name;
+  S.clients=[
+    {id:'c1',full_name:'Laura Sánchez',phone:'+34 600 111 222',notes:'Mechas rubias cada 6 semanas'},
+    {id:'c2',full_name:'Carmen Ortega',phone:'+34 600 333 444',notes:'Barros sin amoniaco'},
+    {id:'c3',full_name:'Marta Jiménez',phone:'+34 600 555 666',notes:'Tinte castaño natural'}
+  ];
+  const d=new Date(),mk=(h,m)=>new Date(d.getFullYear(),d.getMonth(),d.getDate(),h,m).toISOString();
+  S.appointments=[
+    {id:'a1',client_name:'Laura Sánchez',service_name:'mechas',hair_length:'long',starts_at:mk(10,30),status:'confirmed'},
+    {id:'a2',client_name:'Carmen Ortega',service_name:'barros',hair_length:'medium',starts_at:mk(12,0),status:'booked'},
+    {id:'a3',client_name:'Marta Jiménez',service_name:'cortar_y_peinar',hair_length:'long',starts_at:mk(15,0),status:'booked'},
+    {id:'a4',client_name:'Ana Torres',service_name:'tinte',hair_length:'medium',starts_at:mk(17,0),status:'booked'}
+  ];
+  renderAll();
+}
+
+function renderAll(){renderSvcs();renderClients();renderAppts();renderSalons();}
+
+/* ── SAVE APPT ── */
+async function saveAppt(e){
+  e.preventDefault();
+  const svId=document.getElementById('aS').value;
+  const allSvcs=S.services.length?S.services:DEFAULT_SVCS;
+  const svc=allSvcs.find(s=>(s.id||s.name)===svId)||allSvcs[0];
+  const payload={
+    id:crypto.randomUUID(),
+    client_name:document.getElementById('aN').value.trim(),
+    service_name:svc.name,
+    hair_length:document.getElementById('aL').value,
+    starts_at:new Date(`${document.getElementById('aD').value}T${document.getElementById('aT').value}`).toISOString(),
+    status:'booked',
+    notes:document.getElementById('aNt').value.trim(),
+    salon_id:S.activeSalon?.id
+  };
+  if(S.sb){
+    const phone=document.getElementById('aP').value.trim();
+    const name=document.getElementById('aN').value.trim();
+    let clientId=null;
+    const ex=await S.sb.from('clients').select('*').eq('phone',phone).maybeSingle();
+    if(ex.data)clientId=ex.data.id;
+    else{const ins=await S.sb.from('clients').insert({full_name:name,phone}).select().single();if(ins.error)return showToast(ins.error.message,'err');clientId=ins.data.id;}
+    const rpc=await S.sb.rpc('create_appointment',{p_client_id:clientId,p_service_id:svc.id,p_hair_length:payload.hair_length,p_starts_at:payload.starts_at,p_notes:payload.notes||null});
+    if(rpc.error)return showToast(rpc.error.message,'err');
+    await fetchData();
+  } else {
+    S.appointments.push(payload);renderAppts();
+  }
+  document.getElementById('modalAppt').close();
+  e.target.reset();showToast(T('toast_saved'),'ok');
+}
+
+/* ── SAVE CLIENT ── */
+async function saveClient(e){
+  e.preventDefault();
+  const payload={id:crypto.randomUUID(),full_name:document.getElementById('cN').value.trim(),phone:document.getElementById('cP').value.trim(),notes:document.getElementById('cNt').value.trim()};
+  if(S.sb){const{error}=await S.sb.from('clients').insert(payload);if(error)return showToast(error.message,'err');await fetchData();}
+  else{S.clients.push(payload);renderClients();}
+  document.getElementById('modalClient').close();e.target.reset();showToast(T('toast_saved'),'ok');
+}
+
+/* ── SAVE SALON ── */
+function saveSalon(e){
+  e.preventDefault();
+  const sal={id:crypto.randomUUID(),name:document.getElementById('sNm').value.trim(),city:document.getElementById('sCt').value.trim(),phone:document.getElementById('sPh').value.trim(),address:document.getElementById('sAd').value.trim()};
+  S.salons.push(sal);
+  document.getElementById('modalSalon').close();e.target.reset();
+  renderSalons();showToast(T('toast_saved'),'ok');
+}
+
+/* ── UPDATE STATUS ── */
+async function updateStatus(id,status){
+  if(S.sb){const{error}=await S.sb.from('appointments').update({status}).eq('id',id);if(error)return showToast(error.message,'err');await fetchData();}
+  else{const f=S.appointments.find(a=>a.id===id);if(f){f.status=status;renderAll();}}
+  showToast(T('toast_status'),'ok');
+}
+
+/* ── INIT ── */
+document.getElementById('dateFilter').value=new Date().toISOString().slice(0,10);
+
+const savedSalon=localStorage.getItem('hair_active_salon');
+if(savedSalon)try{S.activeSalon=JSON.parse(savedSalon);document.getElementById('currentSalonName').textContent=S.activeSalon.name;}catch{}
+
+setLang(lang);
+loadSettings();
+
+setTimeout(()=>{
+  document.getElementById('splashBar').classList.add('go');
+  document.getElementById('splashTagline').textContent=lang==='es'?'Sistema de gestión inteligente':'Intelligent management system';
+},100);
+setTimeout(()=>{
+  document.getElementById('splash').classList.add('out');
+  const app=document.getElementById('app');
+  app.style.opacity='1';
+  fetchData();
+  setTimeout(()=>document.getElementById('splash').remove(),600);
+},1600);
+
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+let dp;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;});
+</script>
 </body>
 </html>
